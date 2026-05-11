@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html lang="nl">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Expertpanel</title>
+<style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-soft: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-strong: #0ea5e9;
+      --success: #22c55e;
+      --border: #334155;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e293b 0%, var(--bg) 45%, #020617 100%);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px;
+    }
+
+    .container { width: 100%; max-width: 920px; margin: 0 auto; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(15, 23, 42, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    header { padding: 32px 28px 22px; border-bottom: 1px solid var(--border); }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .tagline {
+      margin: 14px 0 0;
+      color: #67e8f9;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      max-width: 760px;
+    }
+
+    main { padding: 28px; display: grid; gap: 22px; }
+
+    section {
+      background: rgba(31, 41, 55, 0.56);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    h2 { margin: 0 0 12px; font-size: 1.2rem; letter-spacing: -0.02em; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    p:last-child { margin-bottom: 0; }
+
+    a {
+      color: #67e8f9;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.15s ease, text-shadow 0.15s ease;
+    }
+
+    a:hover { color: #a5f3fc; text-shadow: 0 0 12px rgba(103, 232, 249, 0.7); }
+
+    .prompt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 18px;
+      background: var(--accent-strong);
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 10px 24px rgba(14, 165, 233, 0.26);
+    }
+
+    button:hover { transform: translateY(-1px); background: #0284c7; }
+    button:active { transform: translateY(0); }
+    button.copied { background: var(--success); box-shadow: 0 10px 24px rgba(34, 197, 94, 0.25); }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #020617;
+      color: #dbeafe;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 18px;
+      overflow-x: auto;
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    footer { padding: 18px 28px 28px; color: var(--muted); font-size: 0.9rem; text-align: center; }
+
+    .followup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .followup-group {
+      background: rgba(2, 6, 23, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .followup-group h3 { margin-top: 0; margin-bottom: 14px; font-size: 1rem; }
+
+    .mini-prompt {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      margin-bottom: 12px;
+    }
+
+    .mini-prompt span { color: #dbeafe; font-size: 0.92rem; }
+
+    .mini-prompt button {
+      width: auto;
+      align-self: flex-start;
+      padding: 7px 12px;
+      font-size: 0.82rem;
+      background: rgba(14, 165, 233, 0.14);
+      color: #bae6fd;
+      box-shadow: none;
+      font-weight: 600;
+    }
+
+    .mini-prompt button:hover { background: rgba(14, 165, 233, 0.22); transform: none; }
+    .mini-prompt button.copied { background: rgba(34, 197, 94, 0.18); color: #bbf7d0; box-shadow: none; }
+
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      header, main, footer { padding-left: 18px; padding-right: 18px; }
+      section { padding: 18px; }
+      button { width: 100%; }
+      .prompt-header { align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<header>
+<h1>Expertpanel</h1>
+<p class="tagline">Let AI reason like a balanced panel of domain experts.</p>
+<p class="subtitle">
+          Expertpanel helpt je om vraagstukken vanuit meerdere complementaire vakperspectieven te laten analyseren, onder leiding van een neutrale voorzitter.
+        </p>
+</header>
+<main>
+<section aria-labelledby="toelichting-title">
+<h2 id="toelichting-title">📌 Toelichting</h2>
+<p>
+Expertpanel is geen chatbot en ook geen losse expertrol. Het is een manier om AI-vragen vanuit meerdere deskundige perspectieven te laten bekijken, met aandacht voor balans, nuance en zorgvuldige afweging.
+</p>
+<p>
+De kern: een compact panel van publiek bekende of invloedrijke experts kijkt samen naar jouw vraagstuk. Een neutrale voorzitter begeleidt het gesprek, vat samen en bewaakt de balans — zonder partij te kiezen.
+</p>
+<p>
+Dat is een andere aanpak dan simpelweg vragen: “doe alsof je expert X bent.”  
+Expertpanel zorgt ervoor dat meerdere invalshoeken worden meegenomen, verschillen van inzicht zichtbaar worden en juridische, economische, technische, ethische, sociale en wetenschappelijke aspecten beter in evenwicht blijven.
+</p>
+<p>
+Daardoor ontstaan vaak rijkere en beter afgewogen antwoorden, vooral bij complexe onderwerpen waar één mening of één expert niet genoeg is.
+</p>
+<p>
+Expertpanel is onder andere bruikbaar voor:
+<br/>• overheid en beleid
+<br/>• consultancy en strategie
+<br/>• defensie en veiligheid
+<br/>• MT- en bestuursbesluiten
+<br/>• VvE’s en beheerkwesties
+<br/>• technologie en organisatieverandering
+</p>
+<h2 style="margin-top:24px;">💡 Zo werkt het</h2>
+<p>
+Kopieer de prompt en plak deze in een AI-platform zoals
+<a href="https://chatgpt.com" rel="noopener noreferrer" target="_blank">ChatGPT</a>,
+<a href="https://claude.ai" rel="noopener noreferrer" target="_blank">Claude</a>,
+<a href="https://gemini.google.com" rel="noopener noreferrer" target="_blank">Google Gemini</a>,
+<a href="https://copilot.microsoft.com" rel="noopener noreferrer" target="_blank">Microsoft Copilot</a>
+of vergelijkbare systemen.
+</p>
+<p>
+De prompt vraagt eerst om een domein of vakgebied te noemen. Daarna stelt Expertpanel automatisch een passend panel samen en begeleidt het gesprek stap voor stap.
+</p>
+<p>
+Hoe duidelijker je het onderwerp afbakent, hoe beter het panel kan worden samengesteld.
+</p>
+</section>
+<section aria-labelledby="prompt-title">
+<div class="prompt-header">
+<h2 id="prompt-title">🧠 Prompt</h2>
+<button id="copyButton" onclick="copyPrompt()" type="button">Kopieer prompt</button>
+</div>
+<pre id="promptText">Stap 1 — Domeinkeuze
+Vraag alleen: "Welk expertpanel heb je nodig? Benoem een domein of vakgebied."
+Geef daarna opgesomd 6 voorbeelden als platte tekst. Geen uitleg.
+
+---
+
+Stap 2 — Panelvorming (intern, nooit tonen)
+Wacht op het domein. Vraag om verduidelijking bij vage invoer.
+
+Grootte: 3 experts + 1 voorzitter (standaard); 5 + 1 (uitgebreid) alleen bij
+aantoonbaar drie of meer dimensies: juridisch, economisch, technisch, ethisch,
+geopolitiek, sociaal of wetenschappelijk.
+
+Selectie: bestaande, publiek bekende personen · complementaire specialisaties ·
+voorkeur Nederlands/Nederlandstalig, anders internationaal (vermeld dit) ·
+voorzitter: moderatie en synthese, geen deelexpert.
+
+Validatie: vervang stilzwijgend experts die zijn overleden, teruggetreden of
+gediskrediteerd — noem de afgewezen naam nooit. Bij geen geschikte vervanger:
+vermeld "positie vacant" in de introductie.
+
+Toon: experts in eigen vakregister · voorzitter neutraal en synthesegericht ·
+allen scherp, concreet, beknopt.
+
+---
+
+Stap 3 — Introductie opsomming
+Naam panel · Voorzitter: [naam] (moderatierol) · Experts: [naam] (specialisatie)
+Compact. Sluit af met: "Stel je vraag aan het panel."
+
+---
+
+Stap 4 — Grenscheck en beantwoording
+
+Buiten domein — uitsluitend:
+"Dit valt buiten mijn rol als [panelnaam]. Stel gerust een vraag binnen [domein]."
+Geen inhoud, analyse of uitleg. Ook niet bij omwegen of herformuleringen.
+
+Binnen domein:
+· Elke expert: max. 4 zinnen vanuit eigen perspectief; aanvullen of tegenspreken waar relevant.
+· Bij fundamenteel meningsverschil: voorzitter benoemt het, weegt af, kiest geen kant.
+· Voorzitter sluit af: max. 3 zinnen (consensus, spanningsvelden, eventuele vervolgvraag).
+  Vervolgvraag stilzwijgend laten vallen als gebruiker een andere richting kiest.
+· Default: lopende tekst; opsomming alleen als de vraag daarom vraagt.
+
+Panelwijziging: direct verwerken en panel opnieuw introduceren via stap 3.</pre>
+</section>
+<section aria-labelledby="followup-title">
+<h2 id="followup-title">🚀 Vervolgprompts</h2>
+<p>
+            Gebruik deze aanvullende prompts om het panel te sturen, te verscherpen of opnieuw samen te stellen.
+          </p>
+<div class="followup-grid">
+<div class="followup-group">
+<h3>🔄 Panelbeheer</h3>
+<div class="mini-prompt"><span>Welk expertpanel gebruik je momenteel?</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+<div class="mini-prompt"><span>Wijzig het panel naar het domein [domein].</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+
+<div class="mini-prompt"><span>Voeg [expert, discipline of perspectief] toe aan het panel.</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+</div>
+<div class="followup-group">
+<h3>🧠 Analyse</h3>
+<div class="mini-prompt"><span>Laat iedere expert het belangrijkste risico benoemen.</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+<div class="mini-prompt"><span>Waar zijn de experts het fundamenteel oneens?</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+
+<div class="mini-prompt"><span>Welke verborgen aannames kunnen dit vraagstuk ondermijnen?</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+</div>
+<div class="followup-group">
+<h3>⚙️ Stijl</h3>
+<div class="mini-prompt"><span>Geef een kort en praktisch panelantwoord.</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+<div class="mini-prompt"><span>Maak dit geschikt voor een MT-besluit.</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+
+<div class="mini-prompt"><span>Geef een compact strategisch bestuursadvies met expliciete afwegingen en risico’s.</span><button onclick="copyMiniPrompt(this)" type="button">Kopieer</button></div>
+</div>
+</div>
+</section>
+</main>
+<footer>
+        v1.2 · mei 2026 · TL4E
+      </footer>
+</div>
+</div>
+<script>
+    async function copyPrompt() {
+      const promptText = document.getElementById('promptText').innerText;
+      const button = document.getElementById('copyButton');
+
+      try {
+        await navigator.clipboard.writeText(promptText);
+        button.textContent = 'Gekopieerd ✓';
+        button.classList.add('copied');
+      } catch (error) {
+        const textArea = document.createElement('textarea');
+        textArea.value = promptText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        button.textContent = 'Gekopieerd ✓';
+        button.classList.add('copied');
+      }
+
+      setTimeout(() => {
+        button.textContent = 'Kopieer prompt';
+        button.classList.remove('copied');
+      }, 2200);
+    }
+
+    function copyMiniPrompt(button) {
+      const text = button.parentElement.querySelector('span').innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const original = button.textContent;
+        button.textContent = 'Gekopieerd ✓';
+        button.classList.add('copied');
+
+        setTimeout(() => {
+          button.textContent = original;
+          button.classList.remove('copied');
+        }, 1800);
+      });
+    }
+  </script>
+</body>
+</html>
